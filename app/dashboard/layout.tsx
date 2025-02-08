@@ -4,6 +4,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
+import Header from "./_components/Header";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -24,7 +25,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return <div>Loading...</div>;
   }
 
-  return <div>{children}</div>;
+  return <div className="p-6">
+    <Header />
+    {children}
+  </div>;
 };
 
 export default DashboardLayout;

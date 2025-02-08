@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 2,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 3,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 4,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 5,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 6,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 7,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 8,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 9,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    },
+    {
+        "id": 10,
+        "profileImage": "/patient.png",
+        "name": "Adrian",
+        "age": 42,
+        "gender": "Male",
+        "bloodGroup": "AB+",
+        "dateOfJoining": "11 Nov 2024",
+        "address": "Alabama, USA"
+    }
+]
