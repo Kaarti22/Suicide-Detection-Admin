@@ -3,24 +3,28 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
-const page = () => {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const userSession = sessionStorage.getItem("user");
 
   useEffect(() => {
-    if (user?.uid) {
-      router.push(`/dashboard/${user.uid}`);
-    } else if (userSession) {
-      router.push(`/dashboard/${userSession}`);
-    } else {
+    if (!user && !userSession) {
       router.push(`/sign-in`);
     }
   }, [user, userSession, router]);
 
-  return <div>Loading...</div>;
+  if (!user && !userSession) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{children}</div>;
 };
 
-export default page;
+export default DashboardLayout;
