@@ -29,10 +29,11 @@ const UserDashboard = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     axios
-      .get(`/api/patients`)
+      .get("/api/patients")
       .then((response) => {
         setPatients(response.data);
         setLoading(false);
@@ -45,19 +46,33 @@ const UserDashboard = () => {
 
   if (loading) return <p>Loading...</p>;
 
-  // Filter patients based on date range
+  // Filter patients based on date range and search query
   const filteredPatients = patients.filter((patient) => {
-    if (!dateRange?.from || !dateRange?.to) return true; // No filter applied
-    const patientDate = new Date(patient.dateOfJoining.seconds * 1000);
-    return patientDate >= dateRange.from && patientDate <= dateRange.to;
+    const matchesDateRange =
+      !dateRange?.from ||
+      !dateRange?.to ||
+      (new Date(patient.dateOfJoining.seconds * 1000) >= dateRange.from &&
+        new Date(patient.dateOfJoining.seconds * 1000) <= dateRange.to);
+
+    const matchesSearchQuery = patient.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchesDateRange && matchesSearchQuery;
   });
 
   return (
     <div className="my-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">My Patients</h2>
-        <div className="flex items-center justify-between">
-          <Input type="search" placeholder="Search..." className="w-[35%]" />
+        <div className="flex items-center gap-4">
+          <Input
+            type="search"
+            placeholder="Search..."
+            className="w-[35%]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
         </div>
       </div>
