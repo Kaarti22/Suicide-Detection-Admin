@@ -99,7 +99,7 @@ const PatientPage = () => {
           </div>
         </div>
       </div>
-      <Tabs defaultValue="vitals" className="w-screen">
+      <Tabs defaultValue="vitals" className="w-auto">
         <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="vitals">Vitals Data</TabsTrigger>
             <TabsTrigger value="social">Social Media Data</TabsTrigger>
