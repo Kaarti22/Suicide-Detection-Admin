@@ -10,6 +10,7 @@ import { CalendarDays, MapPin } from "lucide-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
+import { DateRange } from "react-day-picker";
 
 interface Patient {
   id: string;
@@ -27,6 +28,7 @@ const UserDashboard = () => {
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   useEffect(() => {
     axios
@@ -43,18 +45,25 @@ const UserDashboard = () => {
 
   if (loading) return <p>Loading...</p>;
 
+  // Filter patients based on date range
+  const filteredPatients = patients.filter((patient) => {
+    if (!dateRange?.from || !dateRange?.to) return true; // No filter applied
+    const patientDate = new Date(patient.dateOfJoining.seconds * 1000);
+    return patientDate >= dateRange.from && patientDate <= dateRange.to;
+  });
+
   return (
     <div className="my-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">My Patients</h2>
         <div className="flex items-center justify-between">
           <Input type="search" placeholder="Search..." className="w-[35%]" />
-          <DateRangePicker />
+          <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
         </div>
       </div>
       <Separator />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {patients.map((patient) => (
+        {filteredPatients.map((patient) => (
           <Card
             key={patient.id}
             className="p-6 shadow-lg cursor-pointer"
@@ -87,7 +96,9 @@ const UserDashboard = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="w-5" />
-                  {new Date(patient.dateOfJoining.seconds * 1000).toLocaleString()}
+                  {new Date(
+                    patient.dateOfJoining.seconds * 1000
+                  ).toLocaleString()}
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5" />
