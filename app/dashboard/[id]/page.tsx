@@ -1,13 +1,12 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import DateRangePicker from "../_components/DateRangePicker";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import patientCards from "@/constants/patientCards.json";
 import Image from "next/image";
-import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
@@ -19,13 +18,11 @@ interface Patient {
   gender: string;
   bloodGroup: string;
   dateOfJoining: Timestamp;
-  profileImage: string;
+  profileImage?: string;
   address: string;
 }
 
 const UserDashboard = () => {
-  const params = useParams();
-  const userId = params.id;
   const router = useRouter();
 
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -39,7 +36,7 @@ const UserDashboard = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load patients data");
+        console.error("Failed to load patients data", err);
         setLoading(false);
       });
   }, []);
