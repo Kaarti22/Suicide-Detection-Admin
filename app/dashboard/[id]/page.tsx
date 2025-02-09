@@ -85,10 +85,10 @@ const UserDashboard = () => {
             </CardContent>
             <CardFooter className="p-4 bg-blue-100 rounded-3xl">
               <div className="flex flex-col gap-2">
-                {/* <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <CalendarDays className="w-5" />
-                  {patient.dateOfJoining}
-                </div> */}
+                  {new Date(patient.dateOfJoining.seconds * 1000).toLocaleString()}
+                </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5" />
                   {patient.address}

@@ -7,6 +7,8 @@ import Image from "next/image";
 import { CalendarDays, MapPin } from "lucide-react";
 import axios from "axios";
 import { Timestamp } from "firebase/firestore";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DataTable from "./_components/DataTable";
 
 interface Patient {
   id: string;
@@ -19,23 +21,43 @@ interface Patient {
   address: string;
 }
 
+interface Vital {
+  id: string;
+  patientId: string;
+  bloodRate: number;
+  SpO2: number;
+  temperature: number;
+  prediction: boolean;
+  timestamp: Timestamp;
+};
+
 const PatientPage = () => {
   const params = useParams();
   const patientId = params.id;
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [vitals, setVitals] = useState<Vital[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!patientId) return;
-    axios.get(`/api/patients/${patientId}`).then((response) => {
-      setPatient(response.data);
-    }).catch((err) => {
-      console.error("Failed to load patient details: ", err);
-      setError("Failed to fetch patient details");
-    }).finally(() => {
-      setLoading(false);
-    });
+
+    const fetchPatientAndVitals = async () => {
+      try {
+        const patientResponse = await axios.get(`/api/patients/${patientId}`)
+        setPatient(patientResponse.data);
+
+        const vitalsResponse = await axios.get(`/api/patients/${patientId}/vitals`);
+        setVitals(vitalsResponse.data);
+      } catch (err) {
+        console.error("Error fetching data: ", err);
+        setError("Failed to fetch patient or vitals data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPatientAndVitals();
   }, [patientId]);
 
   if (loading) return <p>Loading patient details...</p>;
@@ -67,16 +89,28 @@ const PatientPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          {/* <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <CalendarDays className="w-5" />
-            {patient?.dateOfJoining}
-          </div> */}
+            {new Date(patient.dateOfJoining.seconds * 1000).toLocaleString()}
+          </div>
           <div className="flex items-center gap-2">
             <MapPin className="w-5" />
             {patient?.address}
           </div>
         </div>
       </div>
+      <Tabs defaultValue="vitals" className="w-screen">
+        <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="vitals">Vitals Data</TabsTrigger>
+            <TabsTrigger value="social">Social Media Data</TabsTrigger>
+        </TabsList>
+        <TabsContent value="vitals">
+            <DataTable vitals={vitals}/>
+        </TabsContent>
+        <TabsContent value="social">
+            
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
