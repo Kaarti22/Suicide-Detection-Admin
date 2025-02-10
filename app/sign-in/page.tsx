@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const [signInWithEmailAndPassword, userCredential, loading, error] =
     useSignInWithEmailAndPassword(auth);
@@ -22,13 +23,21 @@ const SignIn = () => {
       const response = await signInWithEmailAndPassword(email, password);
       if (!response?.user) {
         console.log("Email or password is incorrect. Check and try again.");
-      } else {
-        const userId = response.user.uid;
-        sessionStorage.setItem("user", userId);
-        setEmail("");
-        setPassword("");
-        router.push(`/dashboard/${userId}`);
+        return;
       }
+
+      if (!response.user.emailVerified) {
+        console.log("Please verify your email before signing in.");
+        setMessage("Please verify your email before signing in.");
+        return;
+      }
+
+      const userId = response.user.uid;
+      sessionStorage.setItem("user", userId);
+      setEmail("");
+      setPassword("");
+
+      router.push(`/dashboard/${userId}`);
     } catch (error) {
       console.error("Error signing in user", error);
     }
