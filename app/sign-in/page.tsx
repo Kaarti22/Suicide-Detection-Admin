@@ -4,12 +4,16 @@ import React, { useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
-const SignUp = () => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, userCredential, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
   const router = useRouter();
 
@@ -32,31 +36,38 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-10 rounded-lg shadow-xl w-96">
+      <div className="bg-gray-800 p-10 rounded-lg shadow-xl w-96 flex flex-col gap-4 items-center">
         <h1 className="text-white text-2xl mb-5">Sign In</h1>
-        <input
+        <Input
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500"
         />
-        <input
+        <Input
           type="password"
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500"
         />
-        <button
-          onClick={handleSignIn}
-          className="w-full p-3 bg-indigo-600 rounded text-white hover:bg-indigo-500"
-        >
-          Sign In
-        </button>
+        <Button onClick={handleSignIn} disabled={loading} className="w-full">
+          {loading ? "Signing in..." : "Sign in"}
+        </Button>
+        {error && <p className="text-red-500 mt-2">{error.message}</p>}
+        <Separator />
+        <p className="text-sm text-white">
+          Don't have an account?{" "}
+          <Button
+            size={"sm"}
+            variant={"link"}
+            onClick={() => router.push(`/sign-up`)}
+          >
+            Sign up
+          </Button>
+        </p>
       </div>
     </div>
   );
 };
 
-export default SignUp;
+export default SignIn;
