@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { Timestamp } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataTable from "./_components/DataTable";
+import { Button } from "@/components/ui/button";
 
 interface Patient {
   id: string;
@@ -32,6 +33,7 @@ interface Vital {
 };
 
 const PatientPage = () => {
+  const router = useRouter();
   const params = useParams();
   const patientId = params.id;
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -111,6 +113,9 @@ const PatientPage = () => {
             
         </TabsContent>
       </Tabs>
+      <Button onClick={() => router.push(`/patients/${patientId}/posts`)}>
+        View Posts
+      </Button>
     </div>
   );
 };
