@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const patientId = params.id;
+    const {id: patientId} = await context.params;
+
     if (!patientId) {
       return NextResponse.json(
         { error: "Patient ID is required" },
