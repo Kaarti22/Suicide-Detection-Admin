@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { Separator } from "@/components/ui/separator";
-import UploadImage from "./_components/UploadImage";
+import Image from "next/image";
 
 interface Doctor {
   id: string;
@@ -23,6 +23,7 @@ const Profile = () => {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!doctorId) return;
@@ -42,24 +43,39 @@ const Profile = () => {
     fetchDoctorDetails();
   }, [doctorId]);
 
-  const handleImageChange = async (newImageUrl: string) => {
-    if (!doctor) return;
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !doctorId) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
+    );
 
     try {
-      console.log("Updating database with image:", newImageUrl);
+      const uploadResponse = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData
+      );
 
-      const response = await axios.patch(`/api/doctors/${doctorId}`, {
-        profileImage: newImageUrl,
-      });
+      const imageUrl = uploadResponse.data.secure_url;
+      console.log("Cloudinary upload successful. URL: ", imageUrl);
 
-      console.log("Database update response:", response.data);
+      await axios.patch(`/api/doctors/${doctorId}`, { profileImage: imageUrl });
 
       setDoctor((prevDoctor) =>
-        prevDoctor ? { ...prevDoctor, profileImage: newImageUrl } : null
+        prevDoctor ? { ...prevDoctor, profileImage: imageUrl } : null
       );
     } catch (err) {
-      console.error("Error updating profile image: ", err);
-      setError("Failed to update profile image");
+      console.error("Error uploading image: ", err);
+      setError("Failed to upload image");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -74,11 +90,26 @@ const Profile = () => {
       <h2 className="text-2xl font-bold">Profile's settings</h2>
       <Separator />
 
-      <UploadImage
-        doctorId={doctorId}
-        currentImage={doctor.profileImage}
-        onImageChange={handleImageChange}
-      />
+      <div className="flex flex-col items-center gap-4">
+        {doctor.profileImage && (
+          <Image
+            src={doctor.profileImage}
+            alt="Profile Image"
+            width={150}
+            height={150}
+            className="rounded-full border"
+          />
+        )}
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="border p-2 rounded-lg cursor-pointer"
+        />
+
+        {uploading && <p>Uploading...</p>}
+      </div>
     </div>
   );
 };

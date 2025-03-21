@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const doctorId = params.id;
+    const { id: doctorId } = await context.params;
     const docRef = doc(db, "doctors", doctorId);
     const docSnap = await getDoc(docRef);
 
@@ -29,10 +29,10 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log("Received PATCH request for doctor ID:", params.id);
+    const { id: doctorId } = await context.params;
 
     const { profileImage } = await req.json();
     if (!profileImage) {
@@ -45,14 +45,14 @@ export async function PATCH(
 
     console.log("Updating Firestore with image:", profileImage);
 
-    const doctorRef = doc(db, "doctors", params.id);
+    const doctorRef = doc(db, "doctors", doctorId);
     await updateDoc(doctorRef, { profileImage });
 
     console.log("Profile image updated successfully in Firestore");
 
     return NextResponse.json(
       { message: "Profile image updated successfully" },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Failed to update Firestore:", error);
