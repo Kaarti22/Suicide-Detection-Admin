@@ -34,30 +34,34 @@ export async function PATCH(
   try {
     const { id: doctorId } = await context.params;
 
-    const { profileImage } = await req.json();
-    if (!profileImage) {
-      console.error("Profile image is missing in request body");
+    if (!doctorId) {
+      console.error("Doctor ID is missing in request params.");
       return NextResponse.json(
-        { error: "Profile image is required" },
+        { error: "Doctor ID is required" },
         { status: 400 }
       );
     }
 
-    console.log("Updating Firestore with image:", profileImage);
+    const updateData = await req.json();
+    if (!updateData || Object.keys(updateData).length === 0) {
+      console.error("Request body is empty");
+      return NextResponse.json(
+        { error: "Update data is required" },
+        { status: 400 }
+      );
+    }
 
     const doctorRef = doc(db, "doctors", doctorId);
-    await updateDoc(doctorRef, { profileImage });
-
-    console.log("Profile image updated successfully in Firestore");
+    await updateDoc(doctorRef, updateData);
 
     return NextResponse.json(
-      { message: "Profile image updated successfully" },
+      { message: "Profile updated successfully" },
       { status: 200 }
     );
   } catch (error) {
     console.error("Failed to update Firestore:", error);
     return NextResponse.json(
-      { error: "Failed to update profile image" },
+      { error: "Failed to update profile" },
       { status: 500 }
     );
   }
