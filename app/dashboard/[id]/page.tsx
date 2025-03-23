@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import DateRangePicker from "../_components/DateRangePicker";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,8 @@ interface Patient {
 
 const UserDashboard = () => {
   const router = useRouter();
+  const params = useParams();
+  const doctorId = params.id;
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,7 @@ const UserDashboard = () => {
             key={patient.id}
             className="p-6 shadow-lg cursor-pointer"
             onClick={() => {
-              router.push(`/patients/${patient.id}`);
+              router.push(`/dashboard/${doctorId}/patients/${patient.id}`);
             }}
           >
             <CardContent className="px-0">

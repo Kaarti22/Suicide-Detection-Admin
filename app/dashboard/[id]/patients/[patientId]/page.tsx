@@ -34,7 +34,7 @@ interface Vital {
 const PatientPage = () => {
   const router = useRouter();
   const params = useParams();
-  const patientId = params.id;
+  const patientId = params.patientId;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [vitals, setVitals] = useState<Vital[]>([]);
   const [loading, setLoading] = useState(true);
