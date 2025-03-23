@@ -19,7 +19,7 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [message, setMessage] = useState("");
 
-  const [createUserWithEmailAndPassword, userCredential, loading, error] =
+  const [createUserWithEmailAndPassword, , loading] =
     useCreateUserWithEmailAndPassword(auth);
 
   const router = useRouter();

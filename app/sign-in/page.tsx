@@ -15,7 +15,7 @@ const SignIn = () => {
   const [message, setMessage] = useState("");
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
-  const [signInWithEmailAndPassword, userCredential, loading, error] =
+  const [signInWithEmailAndPassword, , loading] =
     useSignInWithEmailAndPassword(auth);
 
   const router = useRouter();
@@ -93,7 +93,7 @@ const SignIn = () => {
 
         <Separator />
         <p className="text-sm text-white">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Button
             size={"sm"}
             variant={"link"}

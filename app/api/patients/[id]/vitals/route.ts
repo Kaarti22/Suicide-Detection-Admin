@@ -7,7 +7,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const {id: patientId} = await context.params;
+    const { id: patientId } = await context.params;
 
     if (!patientId) {
       return NextResponse.json(
@@ -28,10 +28,13 @@ export async function GET(
     }));
 
     return NextResponse.json(vitals, { status: 200 });
-  } catch (error: any) {
-    console.error("Error fetching vitals: ", error.message);
+  } catch (err: unknown) {
+    console.error("Error fetching vitals: ", err);
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
+      {
+        error: "Internal Server Error",
+        details: err instanceof Error ? err.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

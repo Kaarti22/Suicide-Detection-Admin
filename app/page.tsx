@@ -5,7 +5,7 @@ import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const [userSession, setUserSession] = useState<string | null>(null);
@@ -28,4 +28,4 @@ const page = () => {
   return <div>Loading...</div>;
 };
 
-export default page;
+export default Page;

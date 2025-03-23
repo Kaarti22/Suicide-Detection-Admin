@@ -181,7 +181,7 @@ const Profile = () => {
             <Button variant={"ghost"} onClick={handleCancelClick}>
               Cancel
             </Button>
-            <Button onClick={handleSaveClick}>Save Changes</Button>
+            <Button onClick={handleSaveClick} disabled={uploading}>Save Changes</Button>
           </>
         ) : (
           <Button onClick={handleEditClick}>Edit Profile</Button>

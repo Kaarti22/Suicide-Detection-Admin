@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
@@ -32,7 +32,6 @@ interface Vital {
 };
 
 const PatientPage = () => {
-  const router = useRouter();
   const params = useParams();
   const patientId = params.patientId;
   const [patient, setPatient] = useState<Patient | null>(null);

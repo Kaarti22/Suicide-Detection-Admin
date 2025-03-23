@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { getAuth, signOut } from "firebase/auth";
 import { BellRing } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 
@@ -35,9 +36,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
   return (
     <div className="flex items-center justify-between">
-      <a href="/">
+      <Link href={"/"}>
         <Image src={"/logo.png"} alt="Logo" width={120} height={50} />
-      </a>
+      </Link>
       {title && <h2 className="text-2xl font-bold">{title}</h2>}
       <div className="flex items-center gap-5">
         <BellRing className="cursor-pointer" />
