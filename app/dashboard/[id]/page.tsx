@@ -13,14 +13,24 @@ import { Timestamp } from "firebase/firestore";
 import { DateRange } from "react-day-picker";
 
 interface Patient {
-  id: string;
-  name: string;
-  age: number;
-  gender: string;
-  bloodGroup: string;
-  dateOfJoining: Timestamp;
-  profileImage?: string;
   address: string;
+  age: number;
+  assignedDoctor: string;
+  bloodGroup: string;
+  bgHigh: boolean;
+  bgLow: boolean;
+  dateOfJoining: Timestamp;
+  email: string;
+  firstName: string;
+  gender: string;
+  height: number;
+  id: string;
+  lastName: string;
+  mobileNumber: string;
+  profileImage: string;
+  socialMediaHandle: string;
+  sugar: boolean;
+  weight: number;
 }
 
 const UserDashboard = () => {
@@ -34,16 +44,36 @@ const UserDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    axios
-      .get("/api/patients")
-      .then((response) => {
-        setPatients(response.data);
+    const fetchPatientsForDoctor = async () => {
+      try {
+        const doctorRef = await axios.get(`/api/doctors/${doctorId}`);
+        const doctor = doctorRef.data;
+        const patientIds = doctor.patientIds;
+
+        if (!patientIds || patientIds.length === 0) {
+          setPatients([]);
+          setLoading(false);
+          return;
+        }
+
+        const patientRes = await axios.get(`/api/patients`);
+        const allPatients: Patient[] = patientRes.data;
+
+        console.log("All patients: ", allPatients);
+
+        const linkedPatients = allPatients.filter((p) =>
+          patientIds.includes(p.id)
+        );
+
+        setPatients(linkedPatients);
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load patients data", err);
+      } catch (err) {
+        console.error("Failed to load linked patients: ", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchPatientsForDoctor();
   }, []);
 
   if (loading) return <p>Loading...</p>;
@@ -56,8 +86,8 @@ const UserDashboard = () => {
       (new Date(patient.dateOfJoining.seconds * 1000) >= dateRange.from &&
         new Date(patient.dateOfJoining.seconds * 1000) <= dateRange.to);
 
-    const matchesSearchQuery = patient.name
-      ? patient.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesSearchQuery = patient.firstName
+      ? patient.firstName.toLowerCase().includes(searchQuery.toLowerCase())
       : false;
 
     return matchesDateRange && matchesSearchQuery;
@@ -98,7 +128,7 @@ const UserDashboard = () => {
                   className="rounded-lg shadow-sm"
                 />
                 <div className="flex flex-col gap-0.5">
-                  <h2 className="font-semibold">{patient.name}</h2>
+                  <h2 className="font-semibold">{patient.firstName}</h2>
                   <div className="flex h-5 items-center space-x-2 text-sm">
                     <div>Age: {patient.age}</div>
                     <Separator orientation="vertical" />

@@ -11,14 +11,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataTable from "./_components/DataTable";
 
 interface Patient {
-  id: string;
-  name: string;
-  age: number;
-  gender: string;
-  bloodGroup: string;
-  dateOfJoining: Timestamp;
-  profileImage?: string;
   address: string;
+  age: number;
+  assignedDoctor: string;
+  bloodGroup: string;
+  bgHigh: boolean;
+  bgLow: boolean;
+  dateOfJoining: Timestamp;
+  email: string;
+  firstName: string;
+  gender: string;
+  height: number;
+  id: string;
+  lastName: string;
+  mobileNumber: string;
+  profileImage: string;
+  socialMediaHandle: string;
+  sugar: boolean;
+  weight: number;
 }
 
 interface Vital {
@@ -78,7 +88,7 @@ const PatientPage = () => {
             className="rounded-lg shadow-sm"
           />
           <div className="flex flex-col gap-0.5">
-            <h2 className="font-semibold">{patient?.name}</h2>
+            <h2 className="font-semibold">{patient?.firstName}</h2>
             <div className="flex h-5 items-center space-x-2 text-sm">
               <div>Age: {patient?.age}</div>
               <Separator orientation="vertical" />
