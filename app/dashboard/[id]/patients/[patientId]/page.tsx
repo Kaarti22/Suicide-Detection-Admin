@@ -39,7 +39,7 @@ interface Vital {
   temperature: number;
   prediction: boolean;
   timestamp: Timestamp;
-};
+}
 
 const PatientPage = () => {
   const params = useParams();
@@ -54,10 +54,12 @@ const PatientPage = () => {
 
     const fetchPatientAndVitals = async () => {
       try {
-        const patientResponse = await axios.get(`/api/patients/${patientId}`)
+        const patientResponse = await axios.get(`/api/patients/${patientId}`);
         setPatient(patientResponse.data);
 
-        const vitalsResponse = await axios.get(`/api/patients/${patientId}/vitals`);
+        const vitalsResponse = await axios.get(
+          `/api/patients/${patientId}/vitals`
+        );
         setVitals(vitalsResponse.data);
       } catch (err) {
         console.error("Error fetching data: ", err);
@@ -66,59 +68,80 @@ const PatientPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchPatientAndVitals();
   }, [patientId]);
 
   if (loading) return <p>Loading patient details...</p>;
-  if(error) return <p className="text-red-500">{error}</p>
-  if(!patient) return <p>No patient data found.</p>
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!patient) return <p>No patient data found.</p>;
 
   return (
-    <div className="my-6 flex flex-col gap-4">
+    <div className="my-6 flex flex-col gap-6">
       <h2 className="text-2xl font-bold">Patient Details</h2>
       <Separator />
-      <div className="p-6 flex items-center justify-between shadow-lg rounded-lg">
+      <div className="p-6 flex flex-col md:flex-row md:items-center justify-between shadow-lg rounded-lg bg-white gap-6">
         <div className="flex items-center gap-4">
           <Image
             src={patient?.profileImage || "/patient.png"}
             alt="Patient's profile image"
-            width={70}
+            width={100}
             height={100}
-            className="rounded-lg shadow-sm"
+            className="rounded-xl shadow-md object-cover"
           />
-          <div className="flex flex-col gap-0.5">
-            <h2 className="font-semibold">{patient?.firstName}</h2>
-            <div className="flex h-5 items-center space-x-2 text-sm">
-              <div>Age: {patient?.age}</div>
-              <Separator orientation="vertical" />
-              <div>{patient?.gender}</div>
-              <Separator orientation="vertical" />
-              <div>{patient?.bloodGroup}</div>
-            </div>
+          <div>
+            <h2 className="text-xl font-semibold">
+              {patient.firstName} {patient.lastName}
+            </h2>
+            <p className="text-gray-500 text-sm">
+              {patient.gender}, {patient.age} years
+            </p>
+            <p className="text-gray-500 text-sm">
+              Blood Group: {patient.bloodGroup}
+            </p>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 text-sm text-gray-600">
           <div className="flex items-center gap-2">
-            <CalendarDays className="w-5" />
-            {new Date(patient.dateOfJoining.seconds * 1000).toLocaleString()}
+            <CalendarDays className="w-5 h-5 text-blue-500" />
+            <span>
+              Joined:{" "}
+              {new Date(patient.dateOfJoining.seconds * 1000).toLocaleString()}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-5" />
-            {patient?.address}
+            <MapPin className="w-5 h-5 text-green-500" />
+            <span>{patient.address}</span>
           </div>
         </div>
       </div>
-      <Tabs defaultValue="vitals" className="w-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold mb-2 text-lg">Health Info</h3>
+          <p>Sugar: {patient.sugar ? "Yes" : "No"}</p>
+          <p>BP High: {patient.bgHigh ? "Yes" : "No"}</p>
+          <p>BP Low: {patient.bgLow ? "Yes" : "No"}</p>
+          <p>Height: {patient.height} cm</p>
+          <p>Weight: {patient.weight} kg</p>
+        </div>
+        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold mb-2 text-lg">Contact Info</h3>
+          <p>Email: {patient.email}</p>
+          <p>Mobile: {patient.mobileNumber}</p>
+          <p>Social Handle: @{patient.socialMediaHandle || "N/A"}</p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="vitals" className="w-full mt-6">
         <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="vitals">Vitals Data</TabsTrigger>
-            <TabsTrigger value="social">Social Media Data</TabsTrigger>
+          <TabsTrigger value="vitals">Vitals Data</TabsTrigger>
+          <TabsTrigger value="social">Social Media Data</TabsTrigger>
         </TabsList>
         <TabsContent value="vitals">
-            <DataTable vitals={vitals}/>
+          <DataTable vitals={vitals} />
         </TabsContent>
         <TabsContent value="social">
-            
+          <p className="text-gray-500">Social Media analysis will appear here.</p>
         </TabsContent>
       </Tabs>
     </div>
