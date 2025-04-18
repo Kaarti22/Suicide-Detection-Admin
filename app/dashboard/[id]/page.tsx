@@ -57,8 +57,8 @@ const UserDashboard = () => {
         new Date(patient.dateOfJoining.seconds * 1000) <= dateRange.to);
 
     const matchesSearchQuery = patient.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      ? patient.name.toLowerCase().includes(searchQuery.toLowerCase())
+      : false;
 
     return matchesDateRange && matchesSearchQuery;
   });

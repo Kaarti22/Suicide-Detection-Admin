@@ -7,15 +7,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import axios from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { BellRing } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface HeaderProps {
   title?: string;
+}
+
+interface Doctor {
+  id: string;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  designation: string;
+  emailAddress: string;
+  phoneNumber: string;
+  profileImage: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
@@ -23,6 +35,23 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   const router = useRouter();
   const params = useParams();
   const id = params.id;
+
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchDoctorDetails = async () => {
+      try {
+        const doctorResponse = await axios.get(`/api/doctors/${id}`);
+        setDoctor(doctorResponse.data);
+      } catch (err) {
+        console.error("Error fetching doctor's data: ", err);
+      }
+    }
+
+    fetchDoctorDetails();
+  }, [id]);
 
   const handleLogout = async () => {
     try {
@@ -45,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         <Popover>
           <PopoverTrigger>
             <Image
-              src={"/profileIcon.png"}
+              src={doctor?.profileImage || "/profileIcon.png"}
               alt="Profile Icon"
               height={30}
               width={30}
