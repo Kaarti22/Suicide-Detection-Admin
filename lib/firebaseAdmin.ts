@@ -1,5 +1,5 @@
 import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 
 const raw = process.env.FIREBASE_ADMIN_SDK_KEY as string;
 
