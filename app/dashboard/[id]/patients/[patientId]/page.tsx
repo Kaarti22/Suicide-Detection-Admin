@@ -41,18 +41,32 @@ interface Vital {
   timestamp: Timestamp;
 }
 
+interface Post {
+  id: string;
+  patientId: string;
+  postId: string;
+  content: string;
+  imageUrl: string;
+  textSentiment: string;
+  imageSentiment: string;
+  finalSentiment: string;
+  userHandle: string;
+  timestamp: Timestamp;
+}
+
 const PatientPage = () => {
   const params = useParams();
   const patientId = params.patientId;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [vitals, setVitals] = useState<Vital[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!patientId) return;
 
-    const fetchPatientAndVitals = async () => {
+    const fetchPatientAndVitalsAndPosts = async () => {
       try {
         const patientResponse = await axios.get(`/api/patients/${patientId}`);
         setPatient(patientResponse.data);
@@ -61,6 +75,11 @@ const PatientPage = () => {
           `/api/patients/${patientId}/vitals`
         );
         setVitals(vitalsResponse.data);
+
+        const postsResponse = await axios.get(
+          `/api/patients/${patientId}/posts`
+        );
+        setPosts(postsResponse.data);
       } catch (err) {
         console.error("Error fetching data: ", err);
         setError("Failed to fetch patient or vitals data");
@@ -69,7 +88,7 @@ const PatientPage = () => {
       }
     };
 
-    fetchPatientAndVitals();
+    fetchPatientAndVitalsAndPosts();
   }, [patientId]);
 
   if (loading) return <p>Loading patient details...</p>;
