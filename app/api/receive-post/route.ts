@@ -30,7 +30,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let finalSentiment = "NEUTRAL";
+  const patientDoc = patientSnap.docs[0];
+  const patiendId = patientDoc.id;
+
+  let textSentiment = null;
+  let imageSentiment = null;
+  let finalSentiment = null;
 
   try {
     const formData = new FormData();
@@ -56,19 +61,23 @@ export async function POST(req: NextRequest) {
       }
     );
 
+    textSentiment = sentimentResponse.data.text_sentiment;
+    imageSentiment = sentimentResponse.data.image_sentiment;
     finalSentiment = sentimentResponse.data.final_sentiment;
   } catch (error: any) {
     console.error("Error analyzing sentiment: ", error.message);
   }
 
   await adminDb.collection("postSentiments").add({
+    patiendId,
     userHandle,
     postId,
     content,
-    sentiment: finalSentiment,
+    textSentiment,
+    imageSentiment,
+    finalSentiment,
     imageUrl,
     timestamp: new Date(timestamp),
-    createdAt: new Date(),
   });
 
   return NextResponse.json({ message: "Post processed", finalSentiment });
