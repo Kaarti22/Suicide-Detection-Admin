@@ -1,7 +1,13 @@
+import twilio from "twilio";
 import FormData from "form-data";
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebaseAdmin";
 import axios from "axios";
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID!;
+const authToken = process.env.TWILIO_AUTH_TOKEN!;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER!;
+const client = twilio(accountSid, authToken);
 
 export async function POST(req: NextRequest) {
   const apiKey = req.headers.get("authorization");
@@ -32,6 +38,7 @@ export async function POST(req: NextRequest) {
 
   const patientDoc = patientSnap.docs[0];
   const patientId = patientDoc.id;
+  const patientData = patientDoc.data();
 
   let textSentiment = null;
   let imageSentiment = null;
@@ -79,6 +86,42 @@ export async function POST(req: NextRequest) {
     imageUrl,
     timestamp: new Date(timestamp),
   });
+
+  if (finalSentiment && finalSentiment.toLowerCase() === "negative") {
+    try {
+      const assignedDoctorId = patientData.assignedDoctor;
+
+      if (!assignedDoctorId) {
+        console.error("No assigned doctor for patient");
+      } else {
+        const doctorDocSnap = await adminDb
+          .collection("doctors")
+          .doc(assignedDoctorId)
+          .get();
+
+        if (!doctorDocSnap.exists) {
+          console.error("Assigned doctor not found in doctors collection");
+        } else {
+          const doctorData = doctorDocSnap.data();
+          const doctorPhoneNumber = doctorData?.phoneNumber;
+
+          if (!doctorPhoneNumber) {
+            console.error("Doctor phone number missing");
+          } else {
+            await client.calls.create({
+              url: "http://demo.twilio.com/docs/voice.xml",
+              to: doctorPhoneNumber,
+              from: twilioPhoneNumber,
+            });
+
+            console.log("Doctor notified via call");
+          }
+        }
+      }
+    } catch (callError: any) {
+      console.error("Error making call: ", callError.message);
+    }
+  }
 
   return NextResponse.json({ message: "Post processed", finalSentiment });
 }
