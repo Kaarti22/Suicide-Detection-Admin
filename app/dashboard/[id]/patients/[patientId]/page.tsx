@@ -9,6 +9,7 @@ import axios from "axios";
 import { Timestamp } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataTable from "./_components/DataTable";
+import { Vital } from "@/lib/types";
 
 interface Patient {
   address: string;
@@ -31,17 +32,26 @@ interface Patient {
   weight: number;
 }
 
-interface Vital {
+interface PostAPIResponse {
   id: string;
   patientId: string;
-  bloodRate: number;
-  SpO2: number;
-  temperature: number;
-  prediction: boolean;
+  postId: string;
+  content: string;
+  imageUrl: string;
+  textSentiment: {
+    label: string;
+    score: number;
+  };
+  imageSentiment: {
+    final_image_sentiment: string;
+    image_sentiment: { label: string; score: number }[];
+  };
+  finalSentiment: string;
+  userHandle: string;
   timestamp: Timestamp;
 }
 
-interface Post {
+interface PostForTable {
   id: string;
   patientId: string;
   postId: string;
@@ -54,19 +64,21 @@ interface Post {
   timestamp: Timestamp;
 }
 
+import { vitalColumns, postColumns } from "./_components/columns";
+
 const PatientPage = () => {
   const params = useParams();
-  const patientId = params.patientId;
+  const patientId = params.patientId as string;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [vitals, setVitals] = useState<Vital[]>([]);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostForTable[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!patientId) return;
 
-    const fetchPatientAndVitalsAndPosts = async () => {
+    const fetchPatientData = async () => {
       try {
         const patientResponse = await axios.get(`/api/patients/${patientId}`);
         setPatient(patientResponse.data);
@@ -79,16 +91,31 @@ const PatientPage = () => {
         const postsResponse = await axios.get(
           `/api/patients/${patientId}/posts`
         );
-        setPosts(postsResponse.data);
+        const postsData: PostAPIResponse[] = postsResponse.data;
+
+        const formattedPosts: PostForTable[] = postsData.map((post) => ({
+          id: post.id,
+          patientId: post.patientId,
+          postId: post.postId,
+          content: post.content,
+          imageUrl: post.imageUrl,
+          textSentiment: post.textSentiment.label,
+          imageSentiment: post.imageSentiment.final_image_sentiment,
+          finalSentiment: post.finalSentiment,
+          userHandle: post.userHandle,
+          timestamp: post.timestamp,
+        }));
+
+        setPosts(formattedPosts);
       } catch (err) {
-        console.error("Error fetching data: ", err);
-        setError("Failed to fetch patient or vitals data");
+        console.error("Error fetching patient data:", err);
+        setError("Failed to fetch patient details");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPatientAndVitalsAndPosts();
+    fetchPatientData();
   }, [patientId]);
 
   if (loading) return <p>Loading patient details...</p>;
@@ -102,8 +129,8 @@ const PatientPage = () => {
       <div className="p-6 flex flex-col md:flex-row md:items-center justify-between shadow-lg rounded-lg bg-white gap-6">
         <div className="flex items-center gap-4">
           <Image
-            src={patient?.profileImage || "/patient.png"}
-            alt="Patient's profile image"
+            src={patient.profileImage || "/patient.png"}
+            alt="Patient Profile Image"
             width={100}
             height={100}
             className="rounded-xl shadow-md object-cover"
@@ -134,6 +161,7 @@ const PatientPage = () => {
           </div>
         </div>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
         <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
           <h3 className="font-semibold mb-2 text-lg">Health Info</h3>
@@ -157,10 +185,10 @@ const PatientPage = () => {
           <TabsTrigger value="social">Social Media Data</TabsTrigger>
         </TabsList>
         <TabsContent value="vitals">
-          <DataTable vitals={vitals} />
+          <DataTable data={vitals} columns={vitalColumns} />
         </TabsContent>
         <TabsContent value="social">
-          <p className="text-gray-500">Social Media analysis will appear here.</p>
+          <DataTable data={posts} columns={postColumns} />
         </TabsContent>
       </Tabs>
     </div>

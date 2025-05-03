@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   const patientDoc = patientSnap.docs[0];
-  const patiendId = patientDoc.id;
+  const patientId = patientDoc.id;
 
   let textSentiment = null;
   let imageSentiment = null;
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   }
 
   await adminDb.collection("postSentiments").add({
-    patiendId,
+    patientId,
     userHandle,
     postId,
     content,
