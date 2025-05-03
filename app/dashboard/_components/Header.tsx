@@ -9,7 +9,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { getAuth, signOut } from "firebase/auth";
-import { BellRing } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -70,7 +69,6 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       </Link>
       {title && <h2 className="text-2xl font-bold">{title}</h2>}
       <div className="flex items-center gap-5">
-        <BellRing className="cursor-pointer" />
         <Popover>
           <PopoverTrigger>
             <Image

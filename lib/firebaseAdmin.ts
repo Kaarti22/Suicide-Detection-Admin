@@ -7,11 +7,11 @@ const serviceAccount = JSON.parse(raw);
 
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
 
-const app = !getApps.length
-  ? initializeApp({
-      credential: cert(serviceAccount),
-    })
-  : getApps()[0];
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(serviceAccount),
+  });
+}
 
 const adminDb = getFirestore();
 

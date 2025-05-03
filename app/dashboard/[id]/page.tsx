@@ -74,7 +74,7 @@ const UserDashboard = () => {
     };
 
     fetchPatientsForDoctor();
-  }, []);
+  }, [doctorId]);
 
   if (loading) return <p>Loading...</p>;
 

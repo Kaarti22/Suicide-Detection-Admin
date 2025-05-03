@@ -71,8 +71,9 @@ export async function POST(req: NextRequest) {
     textSentiment = sentimentResponse.data.text_sentiment;
     imageSentiment = sentimentResponse.data.image_sentiment;
     finalSentiment = sentimentResponse.data.final_sentiment;
-  } catch (error: any) {
-    console.error("Error analyzing sentiment: ", error.message);
+  } catch (error) {
+    const err = error as Error;
+    console.error("Error analyzing sentiment: ", err.message);
   }
 
   await adminDb.collection("postSentiments").add({
@@ -116,8 +117,9 @@ export async function POST(req: NextRequest) {
           }
         }
       }
-    } catch (callError: any) {
-      console.error("Error making call: ", callError.message);
+    } catch (callError) {
+      const err = callError as Error;
+      console.error("Error making call: ", err.message);
     }
   }
 
