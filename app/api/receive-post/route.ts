@@ -109,12 +109,10 @@ export async function POST(req: NextRequest) {
             console.error("Doctor phone number missing");
           } else {
             await client.calls.create({
-              url: "http://demo.twilio.com/docs/voice.xml",
+              url: `${process.env.WEBSITE_URL}/api/twiml?patientName=${encodeURIComponent(patientData.firstName)}&timestamp=${encodeURIComponent(new Date(timestamp).toLocaleString())}`,
               to: doctorPhoneNumber,
               from: twilioPhoneNumber,
-            });
-
-            console.log("Doctor notified via call");
+            });            
           }
         }
       }
