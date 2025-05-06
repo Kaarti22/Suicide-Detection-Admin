@@ -4,7 +4,13 @@ import { useParams, useRouter } from "next/navigation";
 import DateRangePicker from "../_components/DateRangePicker";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Image from "next/image";
 import { CalendarDays, MapPin } from "lucide-react";
 import axios from "axios";
@@ -93,6 +99,19 @@ const UserDashboard = () => {
     return matchesDateRange && matchesSearchQuery;
   });
 
+  const totalPatients = filteredPatients.length;
+  const malePatients = filteredPatients.filter(
+    (p) => p.gender.toLowerCase() === "male"
+  ).length;
+  const femalePatients = filteredPatients.filter(
+    (p) => p.gender.toLowerCase() === "female"
+  ).length;
+  const diabeticPatients = filteredPatients.filter((p) => p.sugar).length;
+  const diabetesRiskPercentage =
+    totalPatients > 0
+      ? ((diabeticPatients / totalPatients) * 100).toFixed(0)
+      : "0";
+
   return (
     <div className="my-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -109,6 +128,43 @@ const UserDashboard = () => {
         </div>
       </div>
       <Separator />
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">
+              {totalPatients}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground">Total Patients</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">
+              {malePatients} ♂ / {femalePatients} ♀
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground">
+              Gender Breakdown
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">
+              {diabetesRiskPercentage}%
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground">Diabetes Risk</p>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {filteredPatients.map((patient) => (
           <Card
