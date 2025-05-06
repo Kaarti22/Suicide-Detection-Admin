@@ -65,6 +65,7 @@ interface PostForTable {
 }
 
 import { vitalColumns, postColumns } from "./_components/columns";
+import VitalLineChart from "./_components/VitalLineChart";
 
 const PatientPage = () => {
   const params = useParams();
@@ -184,7 +185,40 @@ const PatientPage = () => {
           <TabsTrigger value="vitals">Vitals Data</TabsTrigger>
           <TabsTrigger value="social">Social Media Data</TabsTrigger>
         </TabsList>
-        <TabsContent value="vitals">
+        <TabsContent value="vitals" className="flex flex-col gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">
+                Temperature over time
+              </h3>
+              <VitalLineChart
+                data={vitals}
+                dataKey="temperature"
+                color="#f97316"
+                unit="°C"
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">
+                Heart Rate Over Time
+              </h3>
+              <VitalLineChart
+                data={vitals}
+                dataKey="heartRate"
+                color="#3b82f6"
+                unit="bpm"
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">SpO₂ Over Time</h3>
+              <VitalLineChart
+                data={vitals}
+                dataKey="SpO2"
+                color="#10b981"
+                unit="%"
+              />
+            </div>
+          </div>
           <DataTable data={vitals} columns={vitalColumns} />
         </TabsContent>
         <TabsContent value="social">
