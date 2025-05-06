@@ -109,17 +109,22 @@ export async function POST(req: NextRequest) {
           if (!doctorPhoneNumber) {
             console.error("Doctor phone number missing");
           } else {
-            await client.calls.create({
-              url: `${process.env.WEBSITE_URL}/api/twiml?patientName=${encodeURIComponent(patientData.firstName)}&timestamp=${encodeURIComponent(new Date(timestamp).toLocaleString())}`,
-              to: doctorPhoneNumber,
+            const formattedTimestamp = new Date(timestamp).toLocaleString();
+            const patientName = patientData.firstName;
+            
+            const smsBody = `The social media post's sentiment is abnormal at ${formattedTimestamp} for ${patientName}. Please check the recorded values immediately.`;
+
+            await client.messages.create({
+              body: smsBody,
               from: twilioPhoneNumber,
-            });            
+              to: doctorPhoneNumber,
+            });
           }
         }
       }
-    } catch (callError) {
-      const err = callError as Error;
-      console.error("Error making call: ", err.message);
+    } catch (error) {
+      const err = error as Error;
+      console.error("Error sending SMS: ", err.message);
     }
   }
 
