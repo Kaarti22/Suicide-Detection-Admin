@@ -119,6 +119,8 @@ const PatientPage = () => {
     fetchPatientData();
   }, [patientId]);
 
+  console.log(vitals);
+
   if (loading) return <p>Loading patient details...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!patient) return <p>No patient data found.</p>;

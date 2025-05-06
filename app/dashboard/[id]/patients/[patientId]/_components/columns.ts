@@ -48,7 +48,6 @@ export const vitalColumns: ColumnDef<Vital>[] = [
   {
     accessorKey: "prediction",
     header: "Prediction",
-    cell: ({ getValue }) => (getValue<boolean>() ? "Abnormal" : "Normal"),
   },
 ];
 
